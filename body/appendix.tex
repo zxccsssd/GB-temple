@@ -1,4 +1,79 @@
-\gchapter{规范型附录标题}
-规范型附录标题用 \verb|\gchapter| 命令。
-\zchapter{资料性附录标题}
-资料型附录标题用 \verb|\zchapter| 命令。
+\gchapter{FASTQ 原始数据最小描述字段}
+\begin{table}[htbp]
+\centering
+\zihao{-5}
+\caption{FASTQ 原始数据最小描述字段}
+\begin{tabular}{p{2.5cm}p{2.9cm}p{1.5cm}p{1.6cm}p{5.0cm}}
+\hline
+字段名称（中文） & 字段名称（英文） & 类型 & 要求 & 说明 \\
+\hline
+作物名称 & crop\_name & 文本 & 必填 & 作物名称，建议统一写法。 \\
+样品编号 & sample\_number & 文本 & 必填 & 用于样本目录命名，应与实际目录一致。 \\
+资源编号 & germplasm\_number & 文本 & 必填 & 资源唯一编号。 \\
+种质名称 & germplasm\_name & 文本 & 必填 & 品种/材料名称。 \\
+是否为全国统一编目资源 & national\_catalog\_or\_not & 枚举 & 必填 & 是/否。 \\
+种质类型 & biological\_status\_of\_accession & 枚举 & 必填 & 按受控词表填写。 \\
+测序平台 & sequencing\_platform & 文本 & 必填 & 测序平台或机型名称。 \\
+文库构建 & library\_construction & 文本 & 必填 & 文库构建或实验设计说明。 \\
+测序技术 & strategy & 文本/枚举 & 必填 & 例如 WGS。 \\
+文库的实验材料来源类型 & source & 文本/枚举 & 必填 & 例如 GENOMIC。 \\
+方法选择 & selection & 文本/枚举 & 必填 & 例如 RANDOM。 \\
+测序片段读取配置相关信息 & layout & 枚举 & 必填 & PAIRED 或 SINGLE。 \\
+质量编码 & quality\_encoding & 文本 & 必填 & 例如 Phred+33。 \\
+F端reads读长 & read\_length\_mate1\_bp & 整数 & 必填 & mate1 读长。 \\
+R端reads读长 & read\_length\_mate2\_bp & 整数 & 条件必填 & Layout=PAIRED 时必填。 \\
+实体数据1名称（R1） & fastq\_r1\_filename & 文本 & 必填 & FASTQ 文件名。 \\
+MD5码1 & md5\_checksum\_1 & 文本 & 必填 & 32 位十六进制字符串。 \\
+实体数据2名称（R2） & fastq\_r2\_filename & 文本 & 条件必填 & Layout=PAIRED 时必填。 \\
+MD5码2 & md5\_checksum\_2 & 文本 & 条件必填 & Layout=PAIRED 时必填。 \\
+是否同时上传参考序列实体数据 & reference\_true & 枚举 & 条件字段 & 是/否。 \\
+是否上传变异检测文件 & vcf\_true & 枚举 & 条件字段 & 是/否。 \\
+提交单位 & submit\_org & 文本 & 建议 & 提交单位或测序公司全称。 \\
+联系人 & contact\_person & 文本 & 建议 & 对接联系人。 \\
+邮箱 & contact\_email & 文本 & 建议 & 对接邮箱。 \\
+\hline
+\end{tabular}
+\end{table}
+
+注：业务需要时，可在上述基础上扩展全国统一编号、参考序列、变异检测文件、质控结果和批次管理等字段。
+
+\zchapter{样本级描述记录示例}
+\begin{table}[htbp]
+\centering
+\zihao{-5}
+\caption{样本级描述记录示例}
+\begin{tabular}{p{5cm}p{8.5cm}}
+\hline
+字段 & 示例值 \\
+\hline
+作物名称 & 小麦 \\
+样品编号 & R01 \\
+资源编号 & GZ-0001 \\
+种质名称 & 周麦36 \\
+测序平台 & Illumina NovaSeq 6000 \\
+测序技术 & WGS \\
+测序片段读取配置相关信息 & PAIRED \\
+F端reads读长 & 150 \\
+R端reads读长 & 150 \\
+实体数据1名称（R1） & Wheat001\_L001\_R1\_001.fastq.gz \\
+MD5码1 & 0123456789abcdef0123456789abcdef \\
+实体数据2名称（R2） & Wheat001\_L001\_R2\_001.fastq.gz \\
+MD5码2 & fedcba9876543210fedcba9876543210 \\
+\hline
+\end{tabular}
+\end{table}
+
+\zchapter{常用检查命令示例}
+\begin{quote}
+\begin{verbatim}
+# gzip 完整性检查（仅对 *.gz）
+gzip -t *.fastq.gz
+
+# 生成或核对 MD5
+md5sum *.fastq.gz > md5sum.txt
+md5sum -c *.md5
+
+# FASTQ 结构与长度一致性检查（示例）
+seqkit fqchk *.fastq.gz
+\end{verbatim}
+\end{quote}
